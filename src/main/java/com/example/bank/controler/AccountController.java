@@ -1,6 +1,7 @@
 package com.example.bank.controler;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 import com.example.bank.dto.AccountDtoRq;
 import com.example.bank.entity.Account;
@@ -10,7 +11,6 @@ import com.example.bank.service.UserService;
 import java.math.BigDecimal;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,12 +24,12 @@ public class AccountController {
     @GetMapping
     public List<Account> getAllAccountsByUser(@RequestParam String token) {
         User user = userService.findUserByToken(token);
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.findAllAccountsByUser(user)).getBody();
+        return ResponseEntity.status(OK).body(accountService.findAllAccountsByUser(user)).getBody();
     }
 
     @GetMapping("/{account}")
     public BigDecimal getAmount(@PathVariable String account) {
-        return ResponseEntity.status(HttpStatus.OK).body(accountService.giveAmount(account)).getBody();
+        return ResponseEntity.status(OK).body(accountService.giveAmount(account)).getBody();
     }
 
     @PostMapping
