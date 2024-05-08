@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: bank-online
+config:
+  token:
+    prefix: online
+    postfix: token

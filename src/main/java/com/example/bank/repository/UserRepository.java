@@ -1,18 +1,15 @@
 package com.example.bank.repository;
 
 import com.example.bank.entity.User;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import org.springframework.stereotype.Component;
 
 @Component
 public class UserRepository {
-    private final Map<String, User> repository = new HashMap<>();
+    private final Map<UUID, User> repository = new HashMap<>();
 
     public void add(User user) {
-        repository.put(user.getPhoneNumber(), user);
+        repository.put(user.getUuid(), user);
     }
 
     public List<User> getAll() {
@@ -22,13 +19,15 @@ public class UserRepository {
     }
 
     public List<String> getAllPhoneNumber() {
-        return new ArrayList<>(repository.keySet());
+        return new ArrayList<>(repository.values().stream().map(User::getPhoneNumber).toList());
     }
 
     public User findByPhoneNumber(String phoneNumber) {
-        if (repository.containsKey(phoneNumber)) {
-            return repository.get(phoneNumber);
-        }
-        throw new RuntimeException("Пользователь с таким номером не найден");
+        return repository
+                .values()
+                .stream()
+                .filter(user -> user.getPhoneNumber().equals(phoneNumber))
+                .findFirst()
+                .orElseThrow();
     }
 }

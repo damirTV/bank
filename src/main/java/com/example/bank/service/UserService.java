@@ -10,12 +10,17 @@ import java.util.List;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
+    @Value("${config.token.prefix}")
+    private String PREFIX_TOKEN;
+    @Value("${config.token.postfix}")
+    private String POSTFIX_TOKEN;
     private final UserRepository userRepository;
     private final AuthService authService;
 
@@ -48,7 +53,7 @@ public class UserService {
     }
 
     public User findUserByToken(String token) {
-        UUID uuid = UUID.fromString(token.substring(6, 42));
+        UUID uuid = ejectUuid(token);
         return userRepository.getAll().stream().filter(user -> user.getUuid().equals(uuid)).findFirst().orElseThrow();
     }
 
@@ -75,6 +80,12 @@ public class UserService {
     }
 
     private String createToken(UUID uuid) {
-        return "online" + uuid + "token";
+        return PREFIX_TOKEN + uuid + POSTFIX_TOKEN;
+    }
+
+    private UUID ejectUuid(String token) {
+        int prefixLength = PREFIX_TOKEN.length();
+        int postfixLength = POSTFIX_TOKEN.length();
+        return UUID.fromString(token.substring(prefixLength, token.length() - postfixLength));
     }
 }
