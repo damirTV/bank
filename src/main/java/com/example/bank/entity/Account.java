@@ -1,15 +1,20 @@
 package com.example.bank.entity;
 
 import java.math.BigDecimal;
-import lombok.Data;
-import lombok.NonNull;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 public class Account {
-    @NonNull
-    private final String account;
-    @NonNull
+    private final int number;
+    private static int counter;
     private final User user;
-    @NonNull
     private BigDecimal amount;
+
+    public Account(User user, @NonNull BigDecimal amount) {
+        counter++;
+        number = counter;
+        this.user = user;
+        this.amount = amount;
+    }
 }

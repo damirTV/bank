@@ -4,6 +4,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 import com.example.bank.dto.AccountDtoRq;
+import com.example.bank.dto.AccountDtoRs;
 import com.example.bank.entity.Account;
 import com.example.bank.entity.User;
 import com.example.bank.service.AccountService;
@@ -22,13 +23,13 @@ public class AccountController {
     private final UserService userService;
 
     @GetMapping
-    public List<Account> getAllAccountsByUser(@RequestParam String token) {
+    public List<AccountDtoRs> getAllAccountsByUser(@RequestParam String token) {
         User user = userService.findUserByToken(token);
         return ResponseEntity.status(OK).body(accountService.findAllAccountsByUser(user)).getBody();
     }
 
     @GetMapping("/{account}")
-    public BigDecimal getAmount(@PathVariable String account) {
+    public BigDecimal getAmount(@PathVariable Integer account) {
         return ResponseEntity.status(OK).body(accountService.giveAmount(account)).getBody();
     }
 

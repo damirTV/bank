@@ -9,13 +9,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AccountRepository {
-    private final Map<String, Account> repository = new HashMap<>();
+    private final Map<Integer, Account> repository = new HashMap<>();
 
     public void add(Account account) {
-        repository.put(account.getAccount(), account);
+        repository.put(account.getNumber(), account);
     }
 
-    public Account findByNumber(String number) {
+    public Account findByNumber(Integer number) {
         if (repository.containsKey(number)) {
             return repository.get(number);
         }

@@ -1,5 +1,7 @@
 package com.example.bank.service;
 
+import com.example.bank.dto.AccountDtoRs;
+import com.example.bank.dto.UserDtoRs;
 import com.example.bank.entity.Account;
 import com.example.bank.entity.User;
 import com.example.bank.repository.AccountRepository;
@@ -15,20 +17,19 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class AccountService {
     private final AccountRepository accountRepository;
-    private static Integer number = 0;
 
     public String createNewAccount(User user) {
-        Account account = new Account(createNumber(), user, BigDecimal.ZERO);
+        Account account = new Account(user, BigDecimal.ZERO);
         accountRepository.add(account);
-        return account.getAccount();
+        return generateNumber(account);
     }
 
-    public void addMoney(String number, BigDecimal money) {
+    public void addMoney(Integer number, BigDecimal money) {
         Account account = accountRepository.findByNumber(number);
         account.setAmount(account.getAmount().add(money).setScale(2, RoundingMode.UP));
     }
 
-    public void takeMoney(String number, BigDecimal money) {
+    public void takeMoney(Integer number, BigDecimal money) {
         Account account = accountRepository.findByNumber(number);
         BigDecimal amount = account.getAmount();
         if (amount.compareTo(money) >= 0) {
@@ -39,22 +40,29 @@ public class AccountService {
         }
     }
 
-    public List<Account> findAllAccountsByUser(User user) {
-        return accountRepository.findAccountByUser(user);
+    public List<AccountDtoRs> findAllAccountsByUser(User user) {
+        return accountRepository.findAccountByUser(user)
+                .stream()
+                .map(this::convertAccountToDto)
+                .toList();
+        //return accountRepository.findAccountByUser(user);
     }
 
-    public BigDecimal giveAmount(String number) {
+    public BigDecimal giveAmount(Integer number) {
         Account account = accountRepository.findByNumber(number);
         return account.getAmount().setScale(2, RoundingMode.UP);
     }
 
-    public boolean check(User user, String number) {
+    public boolean check(User user, Integer number) {
         Account account = accountRepository.findByNumber(number);
-        return account.getAccount().equals(number);
+        return account.getNumber() == number;
     }
 
-    private String createNumber() {
-        number++;
-        return String.format("%06d", number);
+    private String generateNumber(Account account) {
+        return String.format("%06d", account.getNumber());
+    }
+
+    private AccountDtoRs convertAccountToDto(Account account) {
+        return new AccountDtoRs(generateNumber(account), account.getUser(), account.getAmount());
     }
 }
